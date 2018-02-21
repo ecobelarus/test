@@ -1,0 +1,110 @@
+<meta charset="utf-8">
+<script>
+
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	function getCard() {
+		var cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+		return cards[getRandomInt(0, cards.length - 1)];
+	}
+
+	function getSum(hand) {
+		var sum = 0;
+		for (var i = 0; i < hand.length; i++) {
+			var card = hand[i];
+			if (card != 'A'){
+				if (card == 'J' || card == 'Q' || card == 'K'){
+					sum = sum + 10;
+				} else {
+					sum = sum + parseInt(card);
+				}
+			}
+		}
+
+		for (var i = 0; i < hand.length; i++) {
+			var card = hand[i];
+			if (card == 'A'){
+				if (sum <= 10){
+					sum = sum + 11;
+				} else {
+					sum = sum + 1;
+				}
+			}
+		}
+
+		return sum;	
+	}
+
+	function getStatus(){
+		return 'Дилер:  ' + dealer.join(' ') + '\nИгрок:  ' + player.join(' '); 
+	}
+
+	// предложение поиграть
+
+	var mainAnswer = '';
+
+	do {
+		mainAnswer = confirm('Хотите сыграть в Black Jack?');
+
+		if(mainAnswer == true){
+
+			var dealer = [getCard()];
+			var player = [getCard(), getCard()];
+
+			if (getSum(player) == 21) {
+				alert('Невероятное везение! Black Jack на раздаче! Вы победили!\n' + getStatus());
+
+			} else {
+
+				var answer = '';
+
+				do {
+					answer = confirm(getStatus() + '\n\nХотите ещё карту?\n\nOK - да / Отмена - нет');
+
+					if (answer == true) {
+						player.push(getCard());
+
+						if (getSum(player) == 21) {
+							alert('Black Jack! Вы выиграли!\n' + getStatus());
+							break;
+						} else if (getSum(player) > 21) {
+							alert('У вас перебор. Вы проиграли.\n' + getStatus());
+							break;
+						}
+					} else {
+						// игрок закончил брать карты
+
+						//теперь карты берёт дилер
+						while (getSum(dealer) < 17) {
+							dealer.push(getCard());
+						};
+
+						// проверяем результат
+						var sumDealer = getSum(dealer);
+						var sumPlayer = getSum(player);
+
+						if (sumDealer == 21) {
+							alert ('У дилера Black Jack. Вы проиграли :(\n' + getStatus());
+						} else if (sumDealer > 21) {
+							alert ('У дилера перебор. Вы выиграли :)\n' + getStatus());
+						} else if (sumDealer == sumPlayer){
+							alert ('У вас ничья... сыграйте ещё раз\n' + getStatus());
+						} else if (sumDealer > sumPlayer){
+							alert ('Вы проиграли :(\n' + getStatus());
+						} else {
+							alert ('Вы выиграли :)\n' + getStatus());
+						}
+					}
+
+				} while (answer == true);
+			}
+		} else {
+			alert ('До свидания!');
+			break;
+		}
+
+	} while (mainAnswer == true);
+
+</script>
